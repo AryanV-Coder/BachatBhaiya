@@ -82,7 +82,7 @@ def gameplay(body : GameplayRequest):
         
         # Return the sanitized JSON response
         return GameplayResponse(
-            success=True,
+            status="success",
             data=game_data,
             message="Game scenario generated successfully"
         )
