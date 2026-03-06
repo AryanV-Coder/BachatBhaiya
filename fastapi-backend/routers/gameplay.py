@@ -31,7 +31,9 @@ def gameplay(body : GameplayRequest):
                           - Provide choices that cost money (investments/expenses) and choices that earn money.
                           - If the user falls for a scam, deduct coins. If they make a wise choice, award coins.
                           - Ensure that no sequence of choices across the 5 levels can deplete the user's coin balance to zero or below. There must always be at least one viable path that maintains a positive balance.
-                        4. Graph Structure (DAG Strategy): Generate a Directed Acyclic Graph (DAG) up to 5 levels deep. Every node must have exactly 3 choices. To optimize the structure and prevent exponential node growth, different choices from different nodes MUST frequently merge into shared subsequent nodes in the next level (e.g., a safe choice and a risky choice in Level 2 can both lead to the exact same Level 3 scenario, just leaving the user with a different coin balance). 
+                        4. Graph Structure (DAG Strategy): 
+                          - Generate a Directed Acyclic Graph (DAG) up to 5 levels deep. Every node must have exactly 3 choices. To optimize the structure and prevent exponential node growth, different choices from different nodes MUST frequently merge into shared subsequent nodes in the next level (e.g., a safe choice and a risky choice in Level 2 can both lead to the exact same Level 3 scenario, just leaving the user with a different coin balance). 
+                          - Tree Termination: All paths must end exactly at Level 5. The `next_node_id` for all choices in the final leaf nodes MUST be strictly either "success" or "failure" (do not generate new scenarios for these terminal states).
                         5. Strict JSON Compliance: Ensure no duplicate JSON keys are generated within the same object.
 
                         ### OUTPUT FORMAT
