@@ -7,6 +7,6 @@ class GameplayRequest(BaseModel):
     total_coins : str
 
 class GameplayResponse(BaseModel):
-    success: bool
+    status: str
     data: Any  # The sanitized game scenario JSON (list of nodes)
     message: str
