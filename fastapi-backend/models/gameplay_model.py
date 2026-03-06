@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Any
 
 class GameplayRequest(BaseModel):
     role : str
@@ -6,4 +7,6 @@ class GameplayRequest(BaseModel):
     total_coins : str
 
 class GameplayResponse(BaseModel):
-    pass
+    success: bool
+    data: Any  # The sanitized game scenario JSON (list of nodes)
+    message: str

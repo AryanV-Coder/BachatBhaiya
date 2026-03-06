@@ -2,57 +2,85 @@ from fastapi import APIRouter, HTTPException
 from models.gameplay_model import GameplayRequest, GameplayResponse
 from google.genai import types
 from utils.gemini import client
+from utils.sanitizer import sanitize_ai_response
+import json
 
 router = APIRouter()
 
-@router.post('/gameplay')
+@router.post('/gameplay', response_model=GameplayResponse)
 def gameplay(body : GameplayRequest):
 
     prompt = f'''
-- ROLE: {body.role} (e.g., Farmer, Student, Homemaker)
-- LEVEL: {body.level} (0 = Easy/Everyday choices, 1 = Moderate, 2 = Hard, 3 = Complex Scams/High-stakes)
-- CURRENT_COINS: {body.total_coins}
+                - ROLE: {body.role}
+                - LEVEL: {body.level}
+                - CURRENT_COINS: {body.total_coins}
              '''
     system_prompt = '''
-                        You are the "Bachat Bhaiya" Game Engine, an expert AI designed to generate financial RPG scenarios for rural Indian users. Your task is to generate a 5-level decision tree based on the provided user state.
+                        You are the "Bachat Bhaiya" Game Engine, an expert AI designed to generate financial RPG scenarios for diverse Indian demographics. Your task is to generate a 5-level decision graph based on the provided user state.
 
-### INPUT STATE
-- ROLE: {{ROLE}} (e.g., Farmer, Student, Homemaker)
-- LEVEL: {{LEVEL}} (0 = Easy/Everyday choices, 1 = Moderate, 2 = Hard, 3 = Complex Scams/High-stakes)
-- CURRENT_COINS: {{CURRENT_COINS}}
+                        ### INPUT STATE
+                        - ROLE: {{ROLE}} (e.g., Farmer, Student, Homemaker)
+                        - LEVEL: {{LEVEL}} (1 = Easy/Everyday choices, 2 = Moderate, 3 = Hard, 4 = Complex Scams/High-stakes, etc)
+                        - CURRENT_COINS: {{CURRENT_COINS}}
 
-### GENERATION RULES
-1. Role Consistency: All scenarios, language, and items must perfectly match the {{ROLE}}'s daily life in rural/semi-urban India.
-2. Difficulty Scaling: The complexity of the financial traps and scams must match the {{LEVEL}}. Level 0 should be simple budgeting; Level 3 should include sophisticated phishing or loan-shark traps.
-3. Economy Balancing: You MUST respect the {{CURRENT_COINS}} balance. 
-   - Do not generate mandatory scenarios that cost more than {{CURRENT_COINS}}.
-   - Provide choices that cost money (investments/expenses) and choices that earn money.
-   - If the user falls for a scam, deduct points. If they make a wise choice, award points.
-4. Tree Structure: Generate a decision tree up to 5 levels deep. Every node must have exactly 3 choices.
+                        ### GENERATION RULES
+                        1. Role Consistency: All scenarios, language, and items must perfectly match the {{ROLE}}'s specific daily life and environment (e.g., agricultural settings for Farmers, college campuses or urban life for Students, and household management for Homemakers).
+                        2. Difficulty Scaling: The complexity of the financial traps and scams must match the {{LEVEL}}. Level 1 should be simple budgeting; Level 4 should include sophisticated phishing or loan-shark traps.
+                        3. Economy Balancing: You MUST respect the {{CURRENT_COINS}} balance. 
+                          - Do not generate mandatory scenarios that cost more than {{CURRENT_COINS}}.
+                          - Provide choices that cost money (investments/expenses) and choices that earn money.
+                          - If the user falls for a scam, deduct coins. If they make a wise choice, award coins.
+                          - Ensure that no sequence of choices across the 5 levels can deplete the user's coin balance to zero or below. There must always be at least one viable path that maintains a positive balance.
+                        4. Graph Structure (DAG Strategy): Generate a Directed Acyclic Graph (DAG) up to 5 levels deep. Every node must have exactly 3 choices. To optimize the structure and prevent exponential node growth, different choices from different nodes MUST frequently merge into shared subsequent nodes in the next level (e.g., a safe choice and a risky choice in Level 2 can both lead to the exact same Level 3 scenario, just leaving the user with a different coin balance). 
+                        5. Strict JSON Compliance: Ensure no duplicate JSON keys are generated within the same object.
 
-### OUTPUT FORMAT
-You must output ONLY a valid JSON array of objects (representing nodes). Do not include markdown formatting like ```json or any conversational text.
+                        ### OUTPUT FORMAT
+                        You must output ONLY a valid JSON array of objects (representing nodes). Do not include markdown formatting like ```json or any conversational text.
 
-Each object in the array represents a node and must follow this exact schema:
-[
-  {
-    "node_id": "string", // e.g., "level_1_start"
-    "scenario": "string", // The situation presented to the user
-    "choices": [
-      {
-        "choice_text": "string", // What the user can choose to do
-        "coin_impact": integer, // The tuple element: Positive to add coins, negative to deduct, 0 for no impact
-        "next_node_id": "string" // The node_id this choice leads to (or "success"/"fail" if it's the end of the tree)
-      }
-    ] // Must contain exactly 3 choices
-  }
-]
+                        Each object in the array represents a node and must follow this exact schema:
+                        [
+                          {
+                            "node_id": "string", // e.g., "level_1_start"
+                            "scenario": "string", // The situation presented to the user
+                            "choices": [
+                              {
+                                "choice_text": "string", // What the user can choose to do
+                                "coin_impact": integer, // Positive to add coins, negative to deduct, 0 for no impact
+                                "next_node_id": "string" // The node_id this choice leads to (or "success"/"fail" if it's the end of the tree)
+                              }
+                            ] // Must contain exactly 3 choices
+                          }
+                        ]
                     '''
-    response = client.models.generate_content(
-    model="gemini-3-flash-preview",
-    config=types.GenerateContentConfig(
-        system_instruction=system_prompt),
-    contents=prompt
-)
-    print(response.text)
     
+    try:
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt),
+            contents=prompt
+        )
+        
+        # Extract the raw text from the response
+        raw_text = response.text
+        
+        # Sanitize and parse the AI response
+        game_data = sanitize_ai_response(raw_text)
+        
+        # Return the sanitized JSON response
+        return GameplayResponse(
+            success=True,
+            data=game_data,
+            message="Game scenario generated successfully"
+        )
+        
+    except ValueError as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to parse AI response: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error generating gameplay: {str(e)}"
+        )
