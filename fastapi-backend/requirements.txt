@@ -1,0 +1,14 @@
+python-dotenv
+fastapi
+uvicorn
+tiktoken
+opensearch-py
+langchain 
+langchain-community
+langchain-aws
+langchain-core
+boto3
+pypdf
+awscli
+faiss-cpu
+google-genai
