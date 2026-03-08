@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import gameplay, bachat_bhaiya
+from routers import gameplay, bachat_bhaiya, quiz
 
 app = FastAPI()
 
@@ -15,7 +15,7 @@ app.add_middleware(
 
 app.include_router(gameplay.router)
 app.include_router(bachat_bhaiya.router)
-# app.include_router(chat.router)
+app.include_router(quiz.router)
 
 @app.get('/start-server')
 def start_server():

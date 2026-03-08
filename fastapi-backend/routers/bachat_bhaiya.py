@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.bachat_bhaiya_model import BachatBhaiya, BachatBhaiyaResponse
-from utils.gemini import client
-from google.genai import types
+from utils.bedrock import generate_content
 
 router = APIRouter()
 
@@ -36,15 +35,11 @@ def bachat_bhaiya(body : BachatBhaiya):
                     '''
     
     try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            config=types.GenerateContentConfig(
-                system_instruction=system_prompt),
-            contents=prompt
+        # Generate content using Bedrock
+        raw_text = generate_content(
+            system_prompt=system_prompt,
+            user_prompt=prompt
         )
-        
-        # Extract and parse the raw text response as a string
-        raw_text = response.text
         
         # Clean the text (remove any extra whitespace, newlines at start/end)
         parsed_text = raw_text.strip()
