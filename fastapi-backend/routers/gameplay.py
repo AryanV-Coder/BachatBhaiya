@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from models.gameplay_model import GameplayRequest, GameplayResponse
 from utils.bedrock import generate_content
 from utils.sanitizer import sanitize_ai_response
-import json
+from google.genai import types
+from utils.gemini import client
 
 router = APIRouter()
 
@@ -78,11 +79,15 @@ def gameplay(body : GameplayRequest):
                     '''
     
     try:
-        # Generate content using Bedrock
-        raw_text = generate_content(
-            system_prompt=system_prompt,
-            user_prompt=prompt
+        response = client.models.generate_content(
+            model="gemini-3-flash-preview",
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt),
+            contents=prompt
         )
+        
+        # Extract the raw text from the response
+        raw_text = response.text
         
         # Sanitize and parse the AI response
         game_data = sanitize_ai_response(raw_text)
