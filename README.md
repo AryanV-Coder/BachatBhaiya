@@ -1,6 +1,6 @@
 # 🌾 Bachat Bhaiya - Financial Literacy Through Gamification
 
-**An AI-powered village simulation game designed to teach financial planning, savings, and entrepreneurial skills to underserved communities in India.**
+**An AI-powered RPG designed to teach financial planning, savings, and entrepreneurial skills to underserved communities in India.**
 
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
@@ -11,7 +11,7 @@
 
 ## 🎮 Project Overview
 
-**Bachat Bhaiya** is an innovative educational game that combines entertainment with financial literacy. Players step into the shoes of a farmer, merchant, or financial advisor in a vibrant Indian village, making real-world economic decisions while earning coins, managing resources, and progressing through multiple levels.
+**Bachat Bhaiya** is an innovative educational game that combines entertainment with financial literacy. Players step into the shoes of a farmer, Student, or HomeMaker in a vibrant Indian village, making real-world economic decisions while earning coins, managing resources, and progressing through multiple levels.
 
 ### 🎯 Vision
 Empower underprivileged communities with practical financial knowledge through an engaging, interactive gaming experience powered by AI.
@@ -20,7 +20,7 @@ Empower underprivileged communities with practical financial knowledge through a
 
 | Feature | Description |
 |---------|-------------|
-| **🎭 Role-Based Gameplay** | Choose your role: Farmer, Merchant, or Financial Advisor |
+| **🎭 Role-Based Gameplay** | Choose your role: Farmer, Student, or Homemaker |
 | **📊 Interactive Village Simulation** | Manage resources, make business decisions, and grow your wealth |
 | **🤖 AI-Powered Guidance** | Get personalized advice and scenario generation using Google Generative AI |
 | **💰 Dynamic Economy System** | Earn coins, invest, trade, and learn real financial strategies |
@@ -101,8 +101,8 @@ BachatBhaiya/
 ### 1️⃣ Role Selection
 Players choose their role:
 - **👨‍🌾 Farmer** - Plant crops, manage irrigation, sell produce
-- **🏪 Merchant** - Buy low, sell high, manage inventory
-- **💼 Financial Advisor** - Invest, guide others, earn commissions
+- **🏪 Student** - Learn new skills, trade smartly, and manage money to build your future.
+- **💼 HomeMaker** - Manage household finances, invest wisely, and earn commissions by guiding others.
 
 ### 2️⃣ Level Progression
 Each role has multiple levels with increasing difficulty:
@@ -198,7 +198,7 @@ Generate game scenario for a role and level
 Get AI-powered financial advice
 ```json
 {
-  "role": "merchant",
+  "role": "Student",
   "previousLevel": "1",
   "currentCoins": "2500",
   "previousLevelGraph": {...}
