@@ -102,7 +102,7 @@ class GameplayService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'role': role,
-        'level': level,
+        'level': level.toString(),
         'total_coins': totalCoins.toString(),
       }),
     );

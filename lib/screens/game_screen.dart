@@ -43,8 +43,8 @@ class _GameScreenState extends State<GameScreen> {
       final offsetY = (AppSizes.worldHeight * initialScale - size.height) / 2;
 
       _transformCtrl.value = Matrix4.identity()
-        ..scale(initialScale, initialScale, 1.0)
-        ..translate(-offsetX / initialScale, -offsetY / initialScale, 1.0);
+        ..scale(initialScale, initialScale)
+        ..translate(-offsetX / initialScale, -offsetY / initialScale);
     });
   }
 
@@ -756,7 +756,7 @@ class _GameScreenState extends State<GameScreen> {
 
   void _showPloughOptions(LandSegment segment) {
     final vehicles = _player.marketItems
-        .where((item) => item.category == 'vehicle' && item.owned)
+        .where((item) => item.category == 'vehicle' && (item.owned || _player.rentedItems.any((r) => r.item.name == item.name)))
         .toList();
 
     showDialog(
@@ -770,7 +770,7 @@ class _GameScreenState extends State<GameScreen> {
             const SizedBox(height: 16),
             if (vehicles.isEmpty)
               const Text(
-                'You don\'t own any vehicles! You can buy/rent one at the Market.',
+                'You don\'t own or rent any vehicles! You can buy/rent one at the Market.',
                 style: TextStyle(color: Colors.red),
               )
             else

@@ -29,7 +29,6 @@ class _ParisthitiOverlayState extends State<ParisthitiOverlay> {
 
   List<GameNode> _nodes = [];
   GameNode? _currentNode;
-  List<String> _optimalPath = [];
   int _totalCoinImpact = 0;
   Map<String, dynamic>? _gameGraphData;
 
@@ -164,7 +163,6 @@ class _ParisthitiOverlayState extends State<ParisthitiOverlay> {
       setState(() {
         _isLoading = false;
         _nodes = response.nodes;
-        _optimalPath = response.optimalPath;
         _currentNode = _nodes.isNotEmpty ? _nodes.first : null;
         _gameGraphData = {
           'nodes': nodesJson,
@@ -175,6 +173,7 @@ class _ParisthitiOverlayState extends State<ParisthitiOverlay> {
     } catch (e) {
       setState(() {
         _isLoading = false;
+        _showIntroPopup = true; // Go back to intro on error
       });
       // Handle error, perhaps show a message
       ScaffoldMessenger.of(context).showSnackBar(

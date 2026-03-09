@@ -419,8 +419,20 @@ class _ChatOverlayState extends State<ChatOverlay> {
           messageWidget = GestureDetector(
             onTap: () {
               widget.adjustBalance(-20);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Oh no! You lost ₹20 to a scam.')),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Scam Alert!'),
+                    content: const Text('Oh no! You lost ₹20 to a scam.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  );
+                },
               );
             },
             child: messageWidget,
