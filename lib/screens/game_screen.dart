@@ -145,7 +145,7 @@ class _PersonaSelectionScreenState extends State<PersonaSelectionScreen>
       body: AnimatedBuilder(
         animation:
             Listenable.merge([_bgCtrl, _floatCtrl, _cardPulseCtrl]),
-        builder: (_, __) {
+        builder: (_, _) {
           return Stack(
             children: [
               // ── Tiranga-inspired animated background ──────────────
@@ -310,7 +310,7 @@ class _PersonaSelectionScreenState extends State<PersonaSelectionScreen>
                       width: 72,
                       height: 72,
                       // Fallback if asset not found
-                      errorBuilder: (_, __, ___) => const Text(
+                      errorBuilder: (_, _, _) => const Text(
                         '👨‍🌾',
                         style: TextStyle(fontSize: 52),
                       ),
@@ -507,7 +507,7 @@ class _PersonaSelectionScreenState extends State<PersonaSelectionScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '5,000 Coins',
+                      '40,000 Coins',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
