@@ -182,7 +182,7 @@ http://localhost:8000
 
 ### 🎮 Gameplay Endpoints
 
-#### `POST /gameplay/generate`
+#### `POST /gameplay`
 Generate game scenario for a role and level
 ```json
 {
@@ -194,7 +194,7 @@ Generate game scenario for a role and level
 
 ### 🤖 AI Guidance Endpoints
 
-#### `POST /bachat-bhaiya/advice`
+#### `POST /bachat-bhaiya`
 Get AI-powered financial advice
 ```json
 {
@@ -207,7 +207,7 @@ Get AI-powered financial advice
 
 ### 📚 Quiz Endpoints
 
-#### `POST /quiz/generate`
+#### `POST /quiz`
 Generate quiz questions
 ```json
 {
